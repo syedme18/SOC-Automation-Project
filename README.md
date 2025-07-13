@@ -27,10 +27,7 @@ Shuffle → Internet
 → Sends email notifications (e.g., to analysts or ticketing systems).
 
 SOC Analyst
-→ Receives email alerts and can also send email responses.
-
-SOC Analyst → Shuffle → Wazuh
-→ Sends response actions (e.g., block IP, isolate machine). Shuffle handles automation, and Wazuh enforces it.
+→ Receives email alerts
 ```
 
 ---
