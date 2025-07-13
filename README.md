@@ -840,4 +840,180 @@ Click the VirusTotal block:
 Click `Save`. Then go to the person icon again and refresh the workflow. You will now see the VirusTotal report included with the alert.
 <img width="383" height="699" alt="86" src="https://github.com/user-attachments/assets/fdb2bc82-0dc2-45ea-82e0-8563658858ff" />
 
+### 🐝 Create Case in TheHive via Shuffle
+
+Go to Shuffle and search for `TheHive` in Apps. Click to activate it.
+<img width="290" height="366" alt="87" src="https://github.com/user-attachments/assets/e44dc6d1-128f-4ece-bd16-a9a9038e2dfc" />
+
+
+Once activated, drag and drop it into your workflow.
+
+Now go to your TheHive cloud instance. The default admin organization has only one admin user.
+<img width="619" height="301" alt="88" src="https://github.com/user-attachments/assets/5037d15d-1a9d-4f97-9815-a8f2e983d869" />
+
+
+Create a new organization:
+
+* Name: Your Org Name
+* Description: Brief description
+* Confirm creation
+  <img width="862" height="856" alt="89" src="https://github.com/user-attachments/assets/eb813e90-3ff8-41a6-b25e-40462c9453d3" />
+
+
+Click on the newly created organization (e.g., `MyCases`). It will show no users.
+<img width="384" height="178" alt="90" src="https://github.com/user-attachments/assets/b0519b5c-f0de-48af-ba26-27dd3d4b04a5" />
+
+
+Create two users:
+
+1. User: Syed Mohd Hassan (standard user)
+   <img width="849" height="791" alt="91" src="https://github.com/user-attachments/assets/a47bf6c4-0fae-454c-ace3-0d176cd37429" />
+
+2. User: Shuffle SOAR (type: service)
+   <img width="850" height="788" alt="92" src="https://github.com/user-attachments/assets/700f56a2-0a29-41fd-9b3f-10e62a5af8c2" />
+
+
+To set the password for Syed:
+
+* Hover on user → Click `Preview`
+* Scroll → Set password → Click `Confirm`
+  <img width="1457" height="90" alt="93" src="https://github.com/user-attachments/assets/caf99bda-7609-4b0b-baf9-f3a378e5b692" />
+
+  <img width="857" height="243" alt="94" src="https://github.com/user-attachments/assets/3a83f05d-ef30-4328-b53e-5facd358f0b9" />
+
+
+For the service user:
+
+* Hover → Preview → Click `Create API key`
+* Copy the API key securely
+  <img width="851" height="138" alt="95" src="https://github.com/user-attachments/assets/9cda972f-32ec-4c91-a89d-773e0de905ee" />
+
+
+Now logout from Hive admin and log in with `syed@project.com`.
+<img width="1014" height="551" alt="96" src="https://github.com/user-attachments/assets/48959607-9b4d-4bd4-9fe1-4a0a338a6437" />
+
+
+
+
+
+https://github.com/user-attachments/assets/2a910a8e-6804-4589-a990-d2a7174ef3b9
+
+
+
+
+
+Back in Shuffle:
+
+* Click on TheHive app
+* Click `Authenticate TheHive`
+  <img width="431" height="389" alt="98" src="https://github.com/user-attachments/assets/9821c48d-575f-43b8-a504-ac8179ba2039" />
+
+
+Input:
+
+* API Key (from service user)
+* URL: `http://<TheHive-IP>:9000`
+* Click `Submit`
+  <img width="473" height="633" alt="99" src="https://github.com/user-attachments/assets/218f140e-79dd-40cd-8d90-6fcb4e5b1c5f" />
+
+
+Now connect the `VirusTotal` block to `TheHive`.
+Click on TheHive block:
+
+* Change action to `Create Alert`
+  <img width="1131" height="574" alt="100" src="https://github.com/user-attachments/assets/883fb64f-1f63-4643-9a66-e7c2d6f5a4a4" />
+
+* Scroll down and fill in:
+
+```
+Title: Mimikatz Detected
+Tags: ["T1003"]
+Summary: Mimikatz activity detected
+Severity: 7
+Type: Internal
+TLP: 2
+Status: New
+Source ref: rule_id: 100002
+Source: Wazuh
+PAP: 2
+Flag: false
+Description: Mimikatz Detected on host: $exec.text.win.system.computer
+```
+
+Save the workflow.
+
+---
+
+### 🧱 Shuffle JSON Format Error Fix
+
+While running the workflow, an error may occur.
+<img width="576" height="660" alt="101" src="https://github.com/user-attachments/assets/25b49fd6-4d85-47b0-8811-91de905a29cf" />
+
+
+After troubleshooting, the issue was caused by incorrect JSON formatting in the Tags field when set via advanced JSON editor.
+
+Incorrect format (before):
+<img width="401" height="297" alt="102" src="https://github.com/user-attachments/assets/0d21dbf6-5bba-4b87-9f25-2d99456ddbdd" />
+
+
+Correct format (after):
+<img width="389" height="256" alt="103" src="https://github.com/user-attachments/assets/6c22a9b8-304f-4bf7-bfdc-0082f1604b2d" />
+
+
+---
+
+### 🔐 Update Firewall for Port Access
+
+Before starting the workflow, add a new rule in your DigitalOcean firewall:
+
+* Allow access to port `9000` from any IPv4 source
+  <img width="1022" height="69" alt="104" src="https://github.com/user-attachments/assets/e11d5244-b015-417f-9573-de9e5b3177ee" />
+
+
+Rerun the workflow. Check TheHive output in Shuffle. If you see:
+
+* **HTTP Status 201** → alert successfully created
+  <img width="582" height="511" alt="105" src="https://github.com/user-attachments/assets/bd3069de-b037-49d9-ad67-6c07c4071566" />
+
+
+Open TheHive and go to the Alerts page. You should now see the alert there.
+<img width="1919" height="313" alt="106" src="https://github.com/user-attachments/assets/62367a20-ba7b-41b3-95fd-b12075760301" />
+
+<img width="1919" height="889" alt="107" src="https://github.com/user-attachments/assets/b183c44f-033c-4508-810f-cf8a162f68ed" />
+
+
+---
+
+### 📧 Email Alert to SOC Analyst
+
+To automate email alerts:
+
+* Drag `Email` app from Shuffle's app list
+* Connect it to the `VirusTotal` block
+  <img width="1035" height="495" alt="108" src="https://github.com/user-attachments/assets/a917f81b-fbae-4102-928d-88b8d117515d" />
+
+
+Click the `Email` app block and configure:
+
+* Rename to `Email SOC Analyst`
+* Action: `Send email shuffle`
+* Recipients: `your.email@example.com`
+* Subject: `Mimikatz Detected`
+* Body:
+
+```
+Time: $exec.text.win.eventdata.utcTime
+Title: $exec.title
+Host: $exec.text.win.system.computer
+```
+
+<img width="349" height="737" alt="109" src="https://github.com/user-attachments/assets/9fad7c19-4fd9-41a9-8a56-d2cc3a527e1d" />
+
+
+Save and rerun the workflow. You should now receive an email alert.
+![110](https://github.com/user-attachments/assets/360f93e7-0519-48cb-a067-0004058cb345)
+
+![111](https://github.com/user-attachments/assets/5d8cf06d-4a76-4e3f-8e4c-d859836ed2cc)
+
+
 ---
