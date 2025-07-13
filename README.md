@@ -79,7 +79,7 @@ Windows 10 has been installed and imported into VMware.
 
 ---
 
-## ☁️ Phase 2: Installing Wazuh on DigitalOcean
+##  Phase 2: Installing Wazuh on DigitalOcean
 
 ###  Create Wazuh Droplet
 
@@ -163,7 +163,7 @@ Install Wazuh:
 curl -sO https://packages.wazuh.com/4.7/wazuh-install.sh && sudo bash ./wazuh-install.sh -a -i
 ```
 
-> 📎 Reference: [Wazuh Installation Lab](https://github.com/syedme18/Wazuh-Installation-and-Agent-deployment-lab)
+>  Reference: [Wazuh Installation Lab](https://github.com/syedme18/Wazuh-Installation-and-Agent-deployment-lab)
 
 After installation, credentials will be displayed.
 <img width="502" height="680" alt="18" src="https://github.com/user-attachments/assets/b35d9d23-43f8-4868-8df6-0dfd6d74e4b7" />
@@ -191,7 +191,7 @@ Login using the provided credentials.
 
 ---
 
-## 🐝 Phase 3: Installing TheHive
+##  Phase 3: Installing TheHive
 
 ###  Create TheHive Droplet
 
@@ -222,7 +222,7 @@ export JAVA_HOME="/usr/lib/jvm/java-11-amazon-corretto"
 
 ---
 
-### 🗃 Install Cassandra
+###  Install Cassandra
 
 ```bash
 wget -qO - https://downloads.apache.org/cassandra/KEYS | sudo gpg --dearmor -o /usr/share/keyrings/cassandra-archive.gpg
@@ -256,7 +256,7 @@ sudo apt-get install -y thehive
 
 ---
 
-### ⚙ Configure Cassandra for TheHive
+###  Configure Cassandra for TheHive
 
 Open Cassandra configuration:
 
@@ -305,7 +305,7 @@ Check status output
 
 ---
 
-## ⚙ Configure Elasticsearch
+##  Configure Elasticsearch
 
 Open config file:
 
