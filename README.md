@@ -130,7 +130,10 @@ Windows 10 has been installed and imported into VMware.
 
    * Go to Droplets → Wazuh → Networking → Edit Firewall
    * Select `Fwall` and attach
-     `ss15`
+
+https://github.com/user-attachments/assets/f86a811f-2628-49c1-9759-ed717bc660fb
+
+
 
 ---
 
@@ -454,7 +457,9 @@ Welcome to TheHive dashboard!
 
 Wazuh agent will be successfully deployed.
 You should now see **agent count** go from 0 to 1.
-`ss40`
+
+https://github.com/user-attachments/assets/a902ad6c-cc06-42e4-b813-984300f4a158
+
 
 ---
 
@@ -834,67 +839,5 @@ Click the VirusTotal block:
 
 Click `Save`. Then go to the person icon again and refresh the workflow. You will now see the VirusTotal report included with the alert.
 <img width="383" height="699" alt="86" src="https://github.com/user-attachments/assets/fdb2bc82-0dc2-45ea-82e0-8563658858ff" />
-
-
----
-
-### 🐝 Create Alert in TheHive from Shuffle
-
-Search for `TheHive` in Shuffle Apps and click to activate.
-<img width="290" height="366" alt="87" src="https://github.com/user-attachments/assets/03fda045-f903-4fce-a4e3-f340644e3048" />
-
-
-Once activated, drag and drop TheHive into your workflow.
-
-Next, go to your TheHive web interface (running in the cloud). Create a new organization. The default admin organization only has the admin user.
-<img width="619" height="301" alt="88" src="https://github.com/user-attachments/assets/a0257b6c-a806-4878-82c4-0f35d93b201f" />
-
-
-Enter the organization name and description, then confirm to create.
-<img width="862" height="856" alt="89" src="https://github.com/user-attachments/assets/d4804965-60dd-407b-a1a3-9323fa797db2" />
-
-
-Click on the new organization (`MyCases`). You’ll see that there are no users.
-<img width="384" height="178" alt="90" src="https://github.com/user-attachments/assets/5a72c63a-1654-4d8c-9c18-4b587170c836" />
-
-
-Create two users:
-
-1. Regular user (example: Syed Mohd Hassan)
-   <img width="849" height="791" alt="91" src="https://github.com/user-attachments/assets/0f14514b-d68a-4f93-b939-e9f21572ada4" />
-
-2. Service account for Shuffle integration
-   <img width="850" height="788" alt="92" src="https://github.com/user-attachments/assets/3b253df7-0bec-466b-8307-2195f2eb0c04" />
-
-
-Set a password for the Syed user:
-
-* Hover over the user → Click `Preview`
-* Scroll down → Set password → Click `Confirm`
-  <img width="1457" height="90" alt="93" src="https://github.com/user-attachments/assets/cef51308-3c40-4243-8740-5c76a2be2efa" />
-
-  
-
-For the service user (`Shuffle Soar`), hover → preview → click `Create` under API key. Copy or store this key securely.
-`ss95`
-
-Log out from the Hive admin account. Then log in as `syed@project.com`.
-`ss96`
-`ss97`
-
-Now go back to Shuffle:
-
-* Click on TheHive block
-* Click `Authenticate TheHive`
-  `ss98`
-
-Enter your API key and the TheHive URL (including port number), then click `Submit`.
-`ss99`
-
-Now connect the VirusTotal block to TheHive.
-
-* Click on TheHive block again
-* Change action from `Create Case` to `Create Alert`
-  `ss100`
 
 ---
