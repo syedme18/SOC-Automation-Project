@@ -3,7 +3,8 @@
 ## 📌 Project Architecture
 
 Here is the diagram of the project:
-<img width="1002" height="613" alt="1" src="https://github.com/user-attachments/assets/c8a48641-012e-4c8d-a21a-67b798bb265e" />
+![Picsart_25-07-13_18-51-22-204](https://github.com/user-attachments/assets/d1fe6da0-8a5d-4ac4-b484-7659370a9425)
+
 
 
 ```
