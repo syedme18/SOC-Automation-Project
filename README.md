@@ -269,45 +269,9 @@ sudo nano /etc/cassandra/cassandra.yaml
   <img width="528" height="81" alt="24" src="https://github.com/user-attachments/assets/005a862d-273c-4371-9842-96f433196472" />
 
 
-* Change `rpc_address` to public IP
+* Change `rpc_address` to public IP <br>
   <img width="490" height="57" alt="25" src="https://github.com/user-attachments/assets/65e2a29e-0efc-47af-866f-b64e7a78cda0" />
 
-## SOC Automation Project
-
-### 📌 Project Architecture
-
-Here is the diagram of the project:
-`ss1`
-
-```
-Windows 10 client (Wazuh agent)
-→ Sends events (logs, alerts) to the Wazuh Manager.
-
-Wazuh Manager
-→ Receives events from the agent. It analyzes them using rules and decoders.
-
-Wazuh Manager → Shuffle
-→ Sends alerts to Shuffle for orchestration and automation.
-
-Shuffle
-→ Enriches IOCs from the alerts (e.g., queries VirusTotal, IP reputation services).
-
-Shuffle → TheHive
-→ Sends enriched alerts as incidents/cases to TheHive.
-
-Shuffle → Internet
-→ Sends email notifications (e.g., to analysts or ticketing systems).
-
-SOC Analyst
-→ Receives email alerts and can also send email responses.
-
-SOC Analyst → Shuffle → Wazuh
-→ Sends response actions (e.g., block IP, isolate machine). Shuffle handles automation, and Wazuh enforces it.
-```
-
----
-
-## ⚙️ Continue Configuring Cassandra
 
 Now search for `seed_provider` in the Cassandra config file and change the localhost address (`127.0.0.1`) to the **public IP** of your machine.
 <img width="764" height="209" alt="26" src="https://github.com/user-attachments/assets/e39b13b0-47b2-4f59-b45e-9fa0970dee07" />
@@ -571,5 +535,366 @@ Also disable browser protections:
 * Open Chrome → Settings → Privacy and Security → Safe Browsing → Select **No Protection**
   <img width="950" height="316" alt="50" src="https://github.com/user-attachments/assets/5864417a-2a6e-419b-8c5c-d28859aa6322" />
 
+### 📁 Download and Run Mimikatz
+
+Download Mimikatz from the official repository:
+[https://github.com/gentilkiwi/mimikatz/releases/tag/2.2.0-20220919](https://github.com/gentilkiwi/mimikatz/releases/tag/2.2.0-20220919)
+<img width="956" height="242" alt="51" src="https://github.com/user-attachments/assets/e18c2503-6741-4931-ae35-496d02e42c6a" />
+
+---
+
+### ⚙️ Modify Wazuh Manager to Log All Events
+
+Create a backup of the Wazuh config:
+
+```bash
+cp /var/ossec/etc/ossec.conf ~/ossec-backup.conf
+```
+
+Edit the config file:
+
+```bash
+nano /var/ossec/etc/ossec.conf
+```
+
+Inside `<ossec_config>` tag, find `<logall>` and change from `no` to `yes`:
+<img width="746" height="346" alt="52" src="https://github.com/user-attachments/assets/fd7b3740-6a51-4b5f-b6c5-d5989ea7ea24" />
+
+
+Restart the Wazuh manager:
+
+```bash
+systemctl restart wazuh-manager.service
+```
+
+---
+
+### ⚙️ Enable Filebeat Archives Module
+
+Edit Filebeat configuration:
+
+```bash
+nano /etc/filebeat/filebeat.yml
+```
+
+Under `filebeat.modules`, set:
+
+```yaml
+archives:
+  enabled: true
+```
+
+<img width="244" height="143" alt="53" src="https://github.com/user-attachments/assets/c5ab877e-c994-44c9-a1c1-891bfddee573" />
+
+
+Restart Filebeat:
+
+```bash
+systemctl restart filebeat.service
+```
+
+---
+
+### 📊 Create Index Pattern in Wazuh
+
+Navigate to:
+
+> Wazuh > Stack Management > Index Patterns
+
+Wazuh comes with three default index types:
+
+* alerts
+* monitoring
+* statistics
+
+<img width="1161" height="640" alt="54" src="https://github.com/user-attachments/assets/611601e2-603f-4206-b5f9-33acaf23428c" />
+
+
+Click `Create index pattern`:
+
+* Enter: `wazuh-archives-*`
+* Click `Next step`
+
+<img width="1473" height="180" alt="55" src="https://github.com/user-attachments/assets/0b466719-9675-4eec-bf5d-a79cd3eba4f5" />
+
+
+Select `@timestamp` as the time field and finish creation.
+
+Now go to `Discover` and select `wazuh-archives-*` to view full logs.
+<img width="460" height="509" alt="56" src="https://github.com/user-attachments/assets/f84e867d-6432-4278-a877-b46ee118038c" />
+
+
+---
+
+### 🔢 Simulate Mimikatz Detection
+
+Run `mimikatz.exe` from your Windows client machine.
+<img width="524" height="162" alt="57" src="https://github.com/user-attachments/assets/8d87caef-3f1b-4126-b449-c896b88cecce" />
+
+
+Then, in Wazuh Discover tab, search `mimikatz`. You should see hits.
+<img width="1919" height="275" alt="58" src="https://github.com/user-attachments/assets/832f6cda-5f7a-4c28-b977-2489a63c4754" />
+
+<img width="1577" height="807" alt="59" src="https://github.com/user-attachments/assets/fdc2cba9-a305-4f4e-9d38-0b935b23b72a" />
+
+
+View the `originalFileName` field — it will show `mimikatz.exe`.
+<img width="608" height="57" alt="60" src="https://github.com/user-attachments/assets/eaf6476f-8e77-4540-9796-ca9ab07aa836" />
+
+
+---
+
+### ⚡️ Create Detection Rule in Wazuh for Mimikatz
+
+Go to:
+
+> Management > Rules
+
+<img width="740" height="499" alt="61" src="https://github.com/user-attachments/assets/bc5ede64-52f6-40ad-8d31-830b7d8c9414" />
+
+
+Click on `Manage Rule Files` and search `Sysmon` → Event ID 1.
+<img width="323" height="627" alt="62" src="https://github.com/user-attachments/assets/6c2fb0dc-ee96-4c27-88f1-3cbd1200b538" />
+
+
+
+Copy the reference rule and head back. Click `Custom Rules`.
+<img width="1005" height="145" alt="64" src="https://github.com/user-attachments/assets/90c4d0fe-35cf-45cd-b2d1-b7b91c1a90a5" />
+
+Click the pen icon to edit `local_rules.xml`
+
+Paste the copied rule and modify as follows:
+
+* Set `id="100002"`
+* Set `level="7"`
+* Set `<field name="originalFileName" type="pcre2">(?i)mimikatz\.exe</field>`
+* Remove `<options>no_full_log</options>`
+* Add description: `Mimikatz Detected`
+* Set MITRE ID: `T1003`
+
+Final rule example:
+<img width="857" height="173" alt="65" src="https://github.com/user-attachments/assets/91759ecf-80d9-4428-ab93-336aac67de1c" />
+
+
+Restart the Wazuh Manager:
+
+```bash
+systemctl restart wazuh-manager.service
+```
+
+Run Mimikatz again in PowerShell.
+<img width="523" height="148" alt="66" src="https://github.com/user-attachments/assets/77747e9b-d921-4159-a043-41602136696c" />
+
+
+Check `Security Events` in Wazuh — you should see a Mimikatz detection.
+<img width="1891" height="188" alt="67" src="https://github.com/user-attachments/assets/6dbf5fa1-0d2d-498b-9b4c-669131aa6c33" />
+
+
+---
+
+## 🪧 Configure Shuffle for Automation
+
+### 🔄 Workflow Overview
+
+1. Mimikatz Alert Sent to Shuffle
+2. Shuffle Receives Mimikatz Alert (Extracts SHA256 hash)
+3. Checks VirusTotal for reputation
+4. Sends enriched alert to TheHive
+5. Sends email to SOC analyst
+
+---
+
+### 🔗 Connect Wazuh with Shuffle
+
+Go to [https://shuffler.io](https://shuffler.io) and create an account.
+Home screen: 
+
+<img width="1918" height="858" alt="68" src="https://github.com/user-attachments/assets/a1cebe68-8ae6-444c-8547-54f1fdc5407a" />
+
+Click `Create Workflow`, name it and define use cases.
+<img width="729" height="839" alt="69" src="https://github.com/user-attachments/assets/00442e13-2e56-4df2-af47-9bd0a397af6a" />
+
+<img width="1919" height="880" alt="70" src="https://github.com/user-attachments/assets/f23dfedf-f6c1-49d3-b034-13c7fe410954" />
+
+
+From left sidebar, drag `Webhook` into triggers.
+<img width="293" height="877" alt="71" src="https://github.com/user-attachments/assets/8edf8585-cecc-46e7-86c7-98c148900311" />
+
+
+Click on the Webhook and rename to `Wazuh-Alerts`. Copy the webhook URL.
+<img width="394" height="160" alt="72" src="https://github.com/user-attachments/assets/1bb47756-2753-43e1-99fb-b5366f41093f" />
+
+
+Click on `Change Me` block. Under actions, choose `Repeat back to me` and set it to **Runtime argument**. Save the workflow.
+<img width="1488" height="834" alt="73" src="https://github.com/user-attachments/assets/c1360e6e-5b24-4833-a19f-c2ef29b5e36e" />
+
+
+Edit `ossec.conf` on Wazuh Manager:
+
+```bash
+nano /var/ossec/etc/ossec.conf
+```
+
+Paste the following under `<global>`:
+
+```xml
+<integration>
+  <name>shuffle</name>
+  <hook_url>http://<YOUR_SHUFFLE_URL>/api/v1/hooks/<HOOK_ID></hook_url>
+  <level>3</level>
+  <alert_format>json</alert_format>
+  <rule_id>100002</rule_id>
+</integration>
+```
+
+Update `<hook_url>` with the copied webhook URL.
+<img width="1087" height="134" alt="74" src="https://github.com/user-attachments/assets/a76a83a1-c6f7-4e57-9327-94dcbca2c5b7" />
+
+
+Restart Wazuh Manager:
+
+```bash
+systemctl restart wazuh-manager.service
+```
+
+Now, on your Windows client, run `mimikatz.exe` again in PowerShell.
+
+In Shuffle:
+
+* Click `Webhook`
+* Click `Start`
+
+<img width="385" height="214" alt="75" src="https://github.com/user-attachments/assets/2775c01f-7c1e-4527-9329-6672401f7d36" />
+
+### 👁️ View Workflow Output in Shuffle
+
+At the bottom of the Shuffle editor, click the person icon to view the current execution state. You should see the Mimikatz alert exactly as it appeared in the Wazuh alert.
+<img width="586" height="829" alt="76" src="https://github.com/user-attachments/assets/1e8d8bfb-6706-4631-963f-3c6d8abeb6c3" />
+
+
+This confirms that the Mimikatz alert was successfully sent from Wazuh to Shuffle.
+
+---
+
+### 🧪 Extract Hash from Wazuh Alert
+
+Click the `Change Me` block in Shuffle.
+
+* Change the action from `Repeat back to me` to `Regex Capture Group`.
+  <img width="1036" height="692" alt="77" src="https://github.com/user-attachments/assets/f55d5e59-4908-44d8-885f-fd8f760ab3d3" />
+
+
+Under **Input Data**:
+
+* Click the plus `+` icon
+* Hover over `Runtime Argument`
+* Scroll and select `hashes`
+  <img width="689" height="458" alt="78" src="https://github.com/user-attachments/assets/68b2469e-bca8-40fe-8f6f-14251562d528" />
+
+
+In the **Regex** field, write a regular expression to extract the SHA256 hash. You can use AI assistance for help if needed.
+<img width="1014" height="287" alt="79" src="https://github.com/user-attachments/assets/276ba06e-e570-458e-83a1-d041f25e7344" />
+
+
+Rename this block to `Sha256Extraction`.
+<img width="432" height="734" alt="80" src="https://github.com/user-attachments/assets/9ad7064a-84fd-480e-b9d3-5cda13ea8a1f" />
+
+
+Click `Change Me` again — it should now display the extracted SHA256 hash from the JSON alert.
+<img width="1521" height="637" alt="81" src="https://github.com/user-attachments/assets/b6d462d9-4aa3-48b0-b5dd-a8ccf66ae9e5" />
+
+
+---
+
+### 🧪 VirusTotal Hash Reputation Check
+
+Sign in to [VirusTotal](https://www.virustotal.com).
+<img width="1919" height="729" alt="82" src="https://github.com/user-attachments/assets/ee191484-b8b6-4e5c-a029-ef442cb47d43" />
+
+
+Copy your personal API key.
+<img width="1113" height="173" alt="83" src="https://github.com/user-attachments/assets/e6a8a96f-a5e3-4a85-9e85-93c1b81c1132" />
+
+
+Now return to Shuffle:
+
+* Search for `VirusTotal` under Apps
+* Click to activate it
+* Drag `VirusTotal` into your workflow after `Sha256Extraction`
+  <img width="596" height="301" alt="84" src="https://github.com/user-attachments/assets/791852b3-36a3-4095-96ce-d7bfe9e8f26f" />
+
+
+Click the VirusTotal block:
+
+* In actions, select `Get Hash Report`
+* Authenticate with your API key
+* For ID, use: `$sha256_extraction.group_0.#`
+  <img width="427" height="735" alt="85" src="https://github.com/user-attachments/assets/33e274ee-a9e4-4bb7-908f-3f17794812d4" />
+
+
+Click `Save`. Then go to the person icon again and refresh the workflow. You will now see the VirusTotal report included with the alert.
+<img width="383" height="699" alt="86" src="https://github.com/user-attachments/assets/fdb2bc82-0dc2-45ea-82e0-8563658858ff" />
+
+
+---
+
+### 🐝 Create Alert in TheHive from Shuffle
+
+Search for `TheHive` in Shuffle Apps and click to activate.
+<img width="290" height="366" alt="87" src="https://github.com/user-attachments/assets/03fda045-f903-4fce-a4e3-f340644e3048" />
+
+
+Once activated, drag and drop TheHive into your workflow.
+
+Next, go to your TheHive web interface (running in the cloud). Create a new organization. The default admin organization only has the admin user.
+<img width="619" height="301" alt="88" src="https://github.com/user-attachments/assets/a0257b6c-a806-4878-82c4-0f35d93b201f" />
+
+
+Enter the organization name and description, then confirm to create.
+<img width="862" height="856" alt="89" src="https://github.com/user-attachments/assets/d4804965-60dd-407b-a1a3-9323fa797db2" />
+
+
+Click on the new organization (`MyCases`). You’ll see that there are no users.
+<img width="384" height="178" alt="90" src="https://github.com/user-attachments/assets/5a72c63a-1654-4d8c-9c18-4b587170c836" />
+
+
+Create two users:
+
+1. Regular user (example: Syed Mohd Hassan)
+   <img width="849" height="791" alt="91" src="https://github.com/user-attachments/assets/0f14514b-d68a-4f93-b939-e9f21572ada4" />
+
+2. Service account for Shuffle integration
+   <img width="850" height="788" alt="92" src="https://github.com/user-attachments/assets/3b253df7-0bec-466b-8307-2195f2eb0c04" />
+
+
+Set a password for the Syed user:
+
+* Hover over the user → Click `Preview`
+* Scroll down → Set password → Click `Confirm`
+  <img width="1457" height="90" alt="93" src="https://github.com/user-attachments/assets/cef51308-3c40-4243-8740-5c76a2be2efa" />
+
+  
+
+For the service user (`Shuffle Soar`), hover → preview → click `Create` under API key. Copy or store this key securely.
+`ss95`
+
+Log out from the Hive admin account. Then log in as `syed@project.com`.
+`ss96`
+`ss97`
+
+Now go back to Shuffle:
+
+* Click on TheHive block
+* Click `Authenticate TheHive`
+  `ss98`
+
+Enter your API key and the TheHive URL (including port number), then click `Submit`.
+`ss99`
+
+Now connect the VirusTotal block to TheHive.
+
+* Click on TheHive block again
+* Change action from `Create Case` to `Create Alert`
+  `ss100`
 
 ---
