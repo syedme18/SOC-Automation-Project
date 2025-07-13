@@ -523,7 +523,7 @@ Disable **Windows Defender** temporarily:
 
 1. Open **Windows Security**
 
-2. Go to **Virus & Threat Protection** → Manage Settings
+2. Go to **Virus & Threat Protection** → Manage Settings <br>
    <img width="246" height="292" alt="48" src="https://github.com/user-attachments/assets/a957aa8f-f7e7-44f2-9b31-ada7845677fe" />
 
 
