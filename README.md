@@ -1,6 +1,6 @@
 # SOC Automation Project
 
-## 📌 Project Architecture
+##  Project Architecture
 
 Here is the diagram of the project:
 ![Picsart_25-07-13_18-51-22-204](https://github.com/user-attachments/assets/d1fe6da0-8a5d-4ac4-b484-7659370a9425)
@@ -35,13 +35,13 @@ SOC Analyst → Shuffle → Wazuh
 
 ---
 
-## 🧰 Phase 1: Installing Windows 10 + Sysmon
+##  Phase 1: Installing Windows 10 + Sysmon
 
-### ✅ Install Windows 10 on VMware
+###  Install Windows 10 on VMware
 
 Windows 10 has been installed and imported into VMware.
 
-### ✅ Install Sysmon
+###  Install Sysmon
 
 1. Download Sysmon from Microsoft’s official website.
    <img width="1919" height="1079" alt="2" src="https://github.com/user-attachments/assets/e8902d11-62d2-4e2e-8191-d5782708a886" />
@@ -84,7 +84,7 @@ Windows 10 has been installed and imported into VMware.
 
 ## ☁️ Phase 2: Installing Wazuh on DigitalOcean
 
-### ✅ Create Wazuh Droplet
+###  Create Wazuh Droplet
 
 * Go to DigitalOcean → Create Droplet
   <img width="296" height="787" alt="9" src="https://github.com/user-attachments/assets/cde68f3c-05f5-4aaa-92bc-bb53d8871249" />
@@ -109,7 +109,7 @@ Windows 10 has been installed and imported into VMware.
 
 ---
 
-### 🔐 Set Up a Firewall
+###  Set Up a Firewall
 
 1. Go to **Networking > Firewalls**
    <img width="328" height="699" alt="12" src="https://github.com/user-attachments/assets/29ea8ee1-893a-4560-903f-eda37f357d28" />
@@ -138,7 +138,7 @@ https://github.com/user-attachments/assets/f86a811f-2628-49c1-9759-ed717bc660fb
 
 ---
 
-### 🔌 Connect to Wazuh Using PuTTY
+###  Connect to Wazuh Using PuTTY
 
 * Open **PuTTY**
 
@@ -152,7 +152,7 @@ https://github.com/user-attachments/assets/f86a811f-2628-49c1-9759-ed717bc660fb
 
 ---
 
-### ⚙️ Install Wazuh
+###  Install Wazuh
 
 Update and upgrade system:
 
@@ -190,20 +190,20 @@ Login using the provided credentials.
 <img width="1919" height="904" alt="22" src="https://github.com/user-attachments/assets/5771f3a2-e758-4a59-905f-ff72bc249d4e" />
 
 
-✅ Wazuh is now running in the cloud!
+ Wazuh is now running in the cloud!
 
 ---
 
 ## 🐝 Phase 3: Installing TheHive
 
-### ✅ Create TheHive Droplet
+###  Create TheHive Droplet
 
 * Repeat droplet creation (Ubuntu 22.04)
 * Attach the same firewall `Fwall`
 
 ---
 
-### 🧱 Install Dependencies
+###  Install Dependencies
 
 ```bash
 sudo apt-get update && sudo apt-get upgrade -y
@@ -212,7 +212,7 @@ sudo apt install wget gnupg apt-transport-https git ca-certificates ca-certifica
 
 ---
 
-### ☕ Install Java (Amazon Corretto 11)
+###  Install Java (Amazon Corretto 11)
 
 ```bash
 wget -qO- https://apt.corretto.aws/corretto.key | sudo gpg --dearmor -o /usr/share/keyrings/corretto.gpg
@@ -225,7 +225,7 @@ export JAVA_HOME="/usr/lib/jvm/java-11-amazon-corretto"
 
 ---
 
-### 🗃️ Install Cassandra
+### 🗃 Install Cassandra
 
 ```bash
 wget -qO - https://downloads.apache.org/cassandra/KEYS | sudo gpg --dearmor -o /usr/share/keyrings/cassandra-archive.gpg
@@ -236,7 +236,7 @@ sudo apt install cassandra
 
 ---
 
-### 🔍 Install Elasticsearch
+###  Install Elasticsearch
 
 ```bash
 wget -qO - https://artifacts.elastic.co/GPG-KEY-elasticsearch | sudo gpg --dearmor -o /usr/share/keyrings/elasticsearch-keyring.gpg
@@ -248,7 +248,7 @@ sudo apt install elasticsearch
 
 ---
 
-### 🐝 Install TheHive
+###  Install TheHive
 
 ```bash
 wget -O- https://archives.strangebee.com/keys/strangebee.gpg | sudo gpg --dearmor -o /usr/share/keyrings/strangebee-archive-keyring.gpg
@@ -259,7 +259,7 @@ sudo apt-get install -y thehive
 
 ---
 
-### ⚙️ Configure Cassandra for TheHive
+### ⚙ Configure Cassandra for TheHive
 
 Open Cassandra configuration:
 
@@ -308,7 +308,7 @@ Check status output
 
 ---
 
-## ⚙️ Configure Elasticsearch
+## ⚙ Configure Elasticsearch
 
 Open config file:
 
@@ -339,7 +339,7 @@ systemctl status elasticsearch.service
 
 ---
 
-## ⚙️ Configure TheHive
+##  Configure TheHive
 
 Check directory permissions:
 
@@ -368,7 +368,7 @@ ls -la /opt/thp
 
 ---
 
-### 🛠️ Edit TheHive Configuration
+###  Edit TheHive Configuration
 
 Open config file:
 
@@ -413,7 +413,7 @@ Now verify all three services are **active and running**: Cassandra, Elasticsear
 
 ---
 
-### 🔓 Access TheHive Web Interface
+###  Access TheHive Web Interface
 
 Open your browser and navigate to:
 
@@ -435,7 +435,7 @@ Welcome to TheHive dashboard!
 
 ---
 
-## 📦 Add Wazuh Agent (Windows Client with Sysmon)
+##  Add Wazuh Agent (Windows Client with Sysmon)
 
 1. Open the **Wazuh Web UI**
 
@@ -464,7 +464,7 @@ https://github.com/user-attachments/assets/a902ad6c-cc06-42e4-b813-984300f4a158
 
 ---
 
-## 🧰 Test: Transmit Mimikatz to Trigger Wazuh Alert
+##  Test: Transmit Mimikatz to Trigger Wazuh Alert
 
 ### Step 1: Backup `ossec.conf`
 
@@ -541,7 +541,7 @@ Also disable browser protections:
 * Open Chrome → Settings → Privacy and Security → Safe Browsing → Select **No Protection**
   <img width="950" height="316" alt="50" src="https://github.com/user-attachments/assets/5864417a-2a6e-419b-8c5c-d28859aa6322" />
 
-### 📁 Download and Run Mimikatz
+###  Download and Run Mimikatz
 
 Download Mimikatz from the official repository:
 [https://github.com/gentilkiwi/mimikatz/releases/tag/2.2.0-20220919](https://github.com/gentilkiwi/mimikatz/releases/tag/2.2.0-20220919)
@@ -575,7 +575,7 @@ systemctl restart wazuh-manager.service
 
 ---
 
-### ⚙️ Enable Filebeat Archives Module
+###  Enable Filebeat Archives Module
 
 Edit Filebeat configuration:
 
@@ -601,7 +601,7 @@ systemctl restart filebeat.service
 
 ---
 
-### 📊 Create Index Pattern in Wazuh
+###  Create Index Pattern in Wazuh
 
 Navigate to:
 
@@ -650,7 +650,7 @@ View the `originalFileName` field — it will show `mimikatz.exe`.
 
 ---
 
-### ⚡️ Create Detection Rule in Wazuh for Mimikatz
+###  Create Detection Rule in Wazuh for Mimikatz
 
 Go to:
 
@@ -698,9 +698,9 @@ Check `Security Events` in Wazuh — you should see a Mimikatz detection.
 
 ---
 
-## 🪧 Configure Shuffle for Automation
+##  Configure Shuffle for Automation
 
-### 🔄 Workflow Overview
+###  Workflow Overview
 
 1. Mimikatz Alert Sent to Shuffle
 2. Shuffle Receives Mimikatz Alert (Extracts SHA256 hash)
@@ -710,7 +710,7 @@ Check `Security Events` in Wazuh — you should see a Mimikatz detection.
 
 ---
 
-### 🔗 Connect Wazuh with Shuffle
+###  Connect Wazuh with Shuffle
 
 Go to [https://shuffler.io](https://shuffler.io) and create an account.
 Home screen: 
@@ -772,7 +772,7 @@ In Shuffle:
 
 <img width="385" height="214" alt="75" src="https://github.com/user-attachments/assets/2775c01f-7c1e-4527-9329-6672401f7d36" />
 
-### 👁️ View Workflow Output in Shuffle
+###  View Workflow Output in Shuffle
 
 At the bottom of the Shuffle editor, click the person icon to view the current execution state. You should see the Mimikatz alert exactly as it appeared in the Wazuh alert.
 <img width="586" height="829" alt="76" src="https://github.com/user-attachments/assets/1e8d8bfb-6706-4631-963f-3c6d8abeb6c3" />
@@ -782,7 +782,7 @@ This confirms that the Mimikatz alert was successfully sent from Wazuh to Shuffl
 
 ---
 
-### 🧪 Extract Hash from Wazuh Alert
+###  Extract Hash from Wazuh Alert
 
 Click the `Change Me` block in Shuffle.
 
@@ -812,7 +812,7 @@ Click `Change Me` again — it should now display the extracted SHA256 hash from
 
 ---
 
-### 🧪 VirusTotal Hash Reputation Check
+###  VirusTotal Hash Reputation Check
 
 Sign in to [VirusTotal](https://www.virustotal.com).
 <img width="1919" height="729" alt="82" src="https://github.com/user-attachments/assets/ee191484-b8b6-4e5c-a029-ef442cb47d43" />
@@ -841,7 +841,7 @@ Click the VirusTotal block:
 Click `Save`. Then go to the person icon again and refresh the workflow. You will now see the VirusTotal report included with the alert.
 <img width="383" height="699" alt="86" src="https://github.com/user-attachments/assets/fdb2bc82-0dc2-45ea-82e0-8563658858ff" />
 
-### 🐝 Create Case in TheHive via Shuffle
+###  Create Case in TheHive via Shuffle
 
 Go to Shuffle and search for `TheHive` in Apps. Click to activate it.
 <img width="290" height="366" alt="87" src="https://github.com/user-attachments/assets/e44dc6d1-128f-4ece-bd16-a9a9038e2dfc" />
@@ -945,7 +945,7 @@ Save the workflow.
 
 ---
 
-### 🧱 Shuffle JSON Format Error Fix
+###  Shuffle JSON Format Error Fix
 
 While running the workflow, an error may occur.
 <img width="576" height="660" alt="101" src="https://github.com/user-attachments/assets/25b49fd6-4d85-47b0-8811-91de905a29cf" />
@@ -963,7 +963,7 @@ Correct format (after):
 
 ---
 
-### 🔐 Update Firewall for Port Access
+###  Update Firewall for Port Access
 
 Before starting the workflow, add a new rule in your DigitalOcean firewall:
 
@@ -985,7 +985,7 @@ Open TheHive and go to the Alerts page. You should now see the alert there.
 
 ---
 
-### 📧 Email Alert to SOC Analyst
+###  Email Alert to SOC Analyst
 
 To automate email alerts:
 
